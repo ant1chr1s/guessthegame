@@ -49,7 +49,7 @@ const GAME_EMOJIS = {
   "The Legend of Zelda: Majora's Mask":"🎭","The Legend of Zelda: Skyward Sword":"☁️",
   "Spyro the Dragon":"🐲","Star Fox 64":"🦊","Star Wars Jedi: Fallen Order":"⚔️","Star Wars: The Force Unleashed":"⚡",
   "Call of Duty: Modern Warfare":"🎖️","The Elder Scrolls V: Skyrim":"🐲","Dragon Age: Inquisition":"🛡️",
-  "Terraria":"⛏️","Ghost of Tsushima":"🎌",
+  "Terraria":"⛏️","Ghost of Tsushima":"🎌","Ghost of Yotei":"🐺",
   "Final Fantasy VII":"🗡️","Final Fantasy VIII":"🎓","Final Fantasy IX":"🃏","Final Fantasy X":"🌊","Final Fantasy XV":"🚗",
   "Super Mario Party":"🎉",
   "God of War (2018)":"🪓","God of War III":"⚡","God of War Ragnarök":"🐺","Kingdom Hearts III":"🗝️",
