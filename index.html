@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0D0D1A">
+<title>Videospiel Charakter Guess</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAME SCREEN -->
+<div id="nameScreen" class="screen active">
+  <div class="name-screen">
+    <div class="name-box">
+      <div class="logo">Guess<span style="font-weight:400">The Game</span></div>
+      <div class="logo-sub">Videospiel-Charaktere · Pokédle-Style</div>
+      <div style="font-size:.6rem;color:var(--muted);margin-top:2px;letter-spacing:.5px">v1.0.0</div>
+      <div class="card">
+        <div class="card-title">👤 Wer bist du?</div>
+        <input id="nameInp" class="name-inp" type="text" placeholder="Dein Name..." maxlength="20" autocomplete="off">
+        <div id="nameErr" class="err" style="display:none"></div>
+        <div style="margin-top:4px">
+          <button class="btn-primary" onclick="joinGame('endless')" style="margin-bottom:10px">🎮 ENDLOS-MODUS</button>
+          <button class="btn-primary" onclick="joinGame('daily')" style="background:linear-gradient(135deg,#e6a817,#ff6b35)">📅 TÄGLICHER CHARAKTER</button>
+        </div>
+      </div>
+      <div class="lb-preview" id="lbPreview" style="display:none">
+        <div class="lb-title">🏆 LEADERBOARD</div>
+        <div id="lbPreviewRows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="screen">
+  <header>
+    <div class="header-logo">Guess<span style="font-weight:400">The Game</span></div>
+    <div class="header-sub" id="headerSub">Pokédle-Style · Multiplayer</div>
+    <div style="font-size:.55rem;color:var(--muted);opacity:.6">v1.0.0</div>
+    <div class="header-btns">
+      <button class="btn-icon" onclick="toggleGamesList()" title="Alle Spiele">🎮</button>
+      <button class="btn-icon" id="dailyLbBtn" onclick="toggleDailyLb()" style="display:none">📅</button>
+      <button class="btn-icon" id="lbBtn" onclick="toggleLb()">🏆</button>
+      <button class="btn-icon" onclick="backToName()" style="color:var(--muted)">↩</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+      <span class="player-name" id="statsName"></span>
+      <span>· 🔥 Streak: <b id="statsStreak" style="color:var(--text)">0</b></span>
+      <span>· Best: <b id="statsBest" style="color:var(--text)">0</b></span>
+      <span>· <b id="statsWins" style="color:var(--correct)">0</b>W / <b id="statsLosses" style="color:var(--wrong)">0</b>L</span>
+    </div>
+
+    <!-- DAILY LEADERBOARD PANEL -->
+    <div class="lb-panel" id="dailyLbPanel">
+      <div class="lb-panel-header">
+        <div class="lb-panel-title">📅 TAGES-LEADERBOARD</div>
+        <button class="btn-refresh" onclick="loadDailyLb(true)">↻</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border)">
+        <button class="btn-icon" onclick="dailyHistoryPrev()" style="font-size:1rem;padding:2px 8px">◀</button>
+        <span id="dailyDateLabel" style="font-size:.8rem;color:var(--accent);font-weight:600;cursor:pointer" onclick="dailyGoToday()">Heute</span>
+        <button class="btn-icon" onclick="dailyHistoryNext()" id="dailyNextBtn" style="font-size:1rem;padding:2px 8px">▶</button>
+      </div>
+      <div id="dailyLbRows"><div style="color:var(--muted);text-align:center;font-size:.8rem;padding:12px">Lädt...</div></div>
+    </div>
+
+    <!-- LEADERBOARD PANEL -->
+    <div class="lb-panel" id="lbPanel">
+      <div class="lb-panel-header">
+        <div class="lb-panel-title">🏆 LEADERBOARD</div>
+        <button class="btn-refresh" onclick="loadLb(true)">↻ Aktualisieren</button>
+      </div>
+      <div id="lbRows"><div style="color:var(--muted);text-align:center;font-size:.8rem">Lädt...</div></div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <span><span class="legend-dot" style="background:var(--correct)"></span>Richtig</span>
+      <span><span class="legend-dot" style="background:var(--partial)"></span>Teilweise richtig</span>
+      <span><span class="legend-dot" style="background:var(--wrong)"></span>Falsch</span>
+    </div>
+
+    <!-- WIN BANNER -->
+    <div class="banner win" id="winBanner">
+      <h2>🎉 Richtig!</h2>
+      <p id="winText"></p>
+      <p id="winStreak" style="margin-top:4px;color:var(--partial)"></p>
+      <button class="btn-new" onclick="newGame()">NEUES SPIEL</button>
+    </div>
+
+    <!-- LOSE BANNER -->
+    <div class="banner lose" id="loseBanner">
+      <h2>💀 Nicht erraten!</h2>
+      <p>Die Lösung war:</p>
+      <div class="solution" id="solutionText"></div>
+      <button class="btn-new" onclick="newGame()">NEUES SPIEL</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <input id="searchInp" class="search-inp" type="text" placeholder="Charaktername eingeben..." autocomplete="off"
+        oninput="onSearch()" onkeydown="if(event.key==='Enter')submitGuess()">
+      <button id="guessBtn" class="btn-guess" onclick="submitGuess()">RATEN</button>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-row">
+      <div class="counter">
+        Versuch <span class="cnt" id="cntNum">0</span> / <span id="cntMax">30</span>
+        <span id="cntLeft" style="margin-left:8px"></span>
+      </div>
+      <div class="ctrl-btns">
+        <button class="btn-hint" id="hintBtn" style="display:none" onclick="useHint()">💡 TIPP</button>
+      </div>
+    </div>
+
+    <!-- HINT BOX -->
+    <div class="hint-box" id="hintBox">
+      <span class="hint-label">💡 TIPPS:</span>
+      <span id="hintContent"></span>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid-scroll">
+      <div class="grid-inner">
+        <div class="grid-row" id="gridHeader">
+          <div class="col-label">Charakter</div>
+          <div class="col-label">Franchise</div>
+          <div class="col-label">Spiel</div>
+          <div class="col-label">Genre</div>
+          <div class="col-label">Größe</div>
+          <div class="col-label">Haarfarbe</div>
+          <div class="col-label">Waffe</div>
+          <div class="col-label">Spielbar/NPC</div>
+        </div>
+        <!-- KNOWN CATEGORIES ROW -->
+        <div class="known-row-wrap" id="knownRowWrap" style="display:none">
+          <label class="known-toggle">
+            <input type="checkbox" id="knownToggle" checked onchange="toggleKnownRow(this)">
+            Bekannte Kategorien anzeigen
+          </label>
+          <div class="known-row" id="knownRow">
+            <div class="known-cell name-cell" id="kc-name">?</div>
+            <div class="known-cell" id="kc-fr">?</div>
+            <div class="known-cell" id="kc-sp">?</div>
+            <div class="known-cell" id="kc-g">?</div>
+            <div class="known-cell" id="kc-h">?</div>
+            <div class="known-cell" id="kc-ha">?</div>
+            <div class="known-cell" id="kc-w">?</div>
+            <div class="known-cell" id="kc-p">?</div>
+          </div>
+        </div>
+        <div id="guessGrid"></div>
+        <div class="empty-state" id="emptyState">Tippe einen Charakternamen ein und rate!</div>
+      </div>
+    </div>
+    <!-- GIVE UP -->
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn-giveup" id="giveUpBtn" style="display:none;width:100%;max-width:400px" onclick="giveUp()">⚑ AUFGEBEN — Lösung anzeigen</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAMES LIST MODAL -->
+<div class="modal-overlay" id="gameModal" onclick="if(event.target===this)toggleGamesList()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🎮 SPIELE IM SPIEL</div>
+      <button class="modal-close" onclick="toggleGamesList()">✕</button>
+    </div>
+    <div style="padding:8px 14px 4px">
+      <input id="gameSearchInp" class="search-inp" type="text" placeholder="🔍 Spiel, Franchise oder Charakter suchen..." autocomplete="off" oninput="filterGamesList()" style="width:100%;box-sizing:border-box;font-size:.85rem">
+    </div>
+    <div class="modal-body">
+      <div class="game-grid" id="gameGrid"></div>
+      <div id="charListPanel" style="display:none;padding:4px 0">
+        <button onclick="backToGameList()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:.82rem;padding:0 0 10px 2px">← Zurück</button>
+        <div id="charListContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="characters.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
