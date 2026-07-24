@@ -10,8 +10,8 @@ const DAILY_LB_FILE = 'leaderboard-daily.json';
 
 const MAX_GUESSES = 30;
 const HINT_AT = [10, 20];
-const COL_KEYS  = ['fr','sp','g','h','ha','w','p'];
-const COL_NAMES = ['Franchise','Spiel','Genre','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
+const COL_KEYS  = ['fr','sp','g','ge','h','ha','w','p'];
+const COL_NAMES = ['Franchise','Spiel','Genre','Geschlecht','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
 
 // ── DAILY ROTATION (deterministisch, stabil, ohne Wiederholung bis Zyklusende) ─
 function seededShuffle(n, seed){
@@ -44,7 +44,8 @@ function getDailyChar(){ return getDailyCharForDate(getDailyDateStr()); }
 
 // ── GAMES LIST (Alle Spiele + Genre) ──────────────────────────────────────────
 const GAME_EMOJIS = {
-  "Final Fantasy VII":"🗡️","Final Fantasy X":"🌊","Final Fantasy XV":"🚗",
+  "Final Fantasy VII":"🗡️","Final Fantasy VIII":"🎓","Final Fantasy IX":"🃏","Final Fantasy X":"🌊","Final Fantasy XV":"🚗",
+  "Super Mario Party":"🎉",
   "God of War (2018)":"🪓","God of War III":"⚡","Kingdom Hearts III":"🗝️",
   "Crash Bandicoot 4: It's About Time":"🦊","Super Mario Odyssey":"🍄","Donkey Kong Country":"🍌",
   "The Legend of Zelda: Breath of the Wild":"🗡️","The Legend of Zelda: Ocarina of Time":"⏳",
@@ -63,7 +64,7 @@ const GAME_EMOJIS = {
   "Bayonetta":"💃","Sonic the Hedgehog 2":"💨","Sonic Adventure 2":"🖤","Sonic CD":"🔨",
   "Mega Man 2":"🤖","Super Metroid":"🚀","Diablo II":"😈","Diablo IV":"😈",
   "Red Dead Redemption 2":"🤠","Red Dead Redemption":"🤠","Cuphead":"☕","Hollow Knight":"🗡️",
-  "Celeste":"🏔️","Doom Eternal":"😈","League of Legends":"🌀","Apex Legends":"🪂"
+  "Doom Eternal":"😈","League of Legends":"🌀"
 };
 
 function buildGamesList(){
@@ -631,7 +632,7 @@ function cmpStr(g,t){
 }
 function cellState(key,guess,tgt){
   if(key==='h') return cmpH(guess.h,tgt.h).state;
-  if(key==='ha'||key==='p') return guess[key]===tgt[key] ? 'correct' : 'wrong';
+  if(key==='ha'||key==='p'||key==='ge') return guess[key]===tgt[key] ? 'correct' : 'wrong';
   return cmpStr(guess[key],tgt[key]);
 }
 function cellArrow(key,guess,tgt){ return key==='h' ? cmpH(guess.h,tgt.h).arrow : ''; }
