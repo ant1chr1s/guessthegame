@@ -372,6 +372,11 @@ function joinGame(mode='endless'){
   err.style.display='none';
   playerName=name;
   gameMode=mode;
+  // Reset any leftover panel state from a previous mode/session so nothing leaks between modes
+  document.getElementById('dailyLbPanel').classList.remove('open');
+  document.getElementById('lbPanel').classList.remove('open');
+  document.getElementById('dailyLbRows').innerHTML='<div style="color:var(--muted);text-align:center;font-size:.8rem;padding:12px">Lädt...</div>';
+  dailyViewDate=null;
   updateStatsBar();
   showScreen('gameScreen');
   document.getElementById('headerSub').textContent = (mode==='daily' ? '📅 Täglicher Charakter' : '🎮 Endlos-Modus') + ' · Pokédle-Style';
