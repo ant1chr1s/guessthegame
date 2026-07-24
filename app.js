@@ -14,14 +14,53 @@ const COL_KEYS  = ['fr','sp','g','ge','h','ha','w','p'];
 const COL_NAMES = ['Franchise','Spiel','Genre','Geschlecht','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
 
 // ── DAILY ROTATION (deterministisch, stabil, ohne Wiederholung bis Zyklusende) ─
-function seededShuffle(n, seed){
-  const arr = Array.from({length:n}, (_,i)=>i);
+// Verteilt Charaktere so, dass niemals zwei Tage hintereinander dieselbe
+// Franchise vorkommt (wichtig, da z.B. Final Fantasy mit Abstand die meisten
+// Charaktere im Pool hat und sonst überproportional oft auftauchen würde).
+function buildDailyRotation(chars, seed){
   let s = seed >>> 0;
   function rand(){ s = (s*1664525 + 1013904223) >>> 0; return s / 4294967296; }
-  for(let i=n-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-  return arr;
+
+  const groups = {};
+  chars.forEach((c,i)=>{ (groups[c.fr]=groups[c.fr]||[]).push(i); });
+  Object.values(groups).forEach(g=>{
+    for(let i=g.length-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); [g[i],g[j]]=[g[j],g[i]]; }
+  });
+
+  let pool = Object.entries(groups).map(([fr,idxs])=>({fr, idxs, ptr:0}));
+  const result = [];
+  let lastFr = null, lastFr2 = null;
+  const recentSp = [];
+
+  for(let step=0; step<chars.length; step++){
+    const candidates = pool.filter(p=>p.ptr < p.idxs.length);
+    // Harte Regel (garantiert nie zwei Tage hintereinander dieselbe Franchise):
+    // immer aus den Franchises mit den meisten verbleibenden Charakteren wählen,
+    // außer der Franchise von gestern.
+    let eligible = candidates.filter(p=>p.fr !== lastFr);
+    if(eligible.length===0) eligible = candidates;
+
+    const maxCount = Math.max(...eligible.map(p=>p.idxs.length-p.ptr));
+    let topTier = eligible.filter(p=>(p.idxs.length-p.ptr)===maxCount);
+
+    // Bei Gleichstand: Franchise von vorgestern und zuletzt gespieltes Spiel meiden
+    let tieBreak = topTier.filter(p=>p.fr!==lastFr2);
+    if(tieBreak.length>0) topTier = tieBreak;
+    let tieBreak2 = topTier.filter(p=>!recentSp.includes(chars[p.idxs[p.ptr]].sp));
+    if(tieBreak2.length>0) topTier = tieBreak2;
+
+    const chosen = topTier[Math.floor(rand()*topTier.length)];
+    const idx = chosen.idxs[chosen.ptr];
+    result.push(idx);
+    chosen.ptr++;
+    lastFr2 = lastFr;
+    lastFr = chosen.fr;
+    recentSp.push(chars[idx].sp);
+    if(recentSp.length>4) recentSp.shift();
+  }
+  return result;
 }
-const DAILY_ROTATION = seededShuffle(C.length, 918273645);
+const DAILY_ROTATION = buildDailyRotation(C, 918273645);
 const DAILY_EPOCH = '2026-07-24';
 
 function getDailyDateStr(){
