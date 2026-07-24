@@ -42,72 +42,21 @@ function getDailyCharForDate(dateStr){
 }
 function getDailyChar(){ return getDailyCharForDate(getDailyDateStr()); }
 
-// ── GAMES LIST (Alle Spiele + Genre) ──────────────────────────────────────────
-const GAME_EMOJIS = {
-  "Final Fantasy":"⚔️","Final Fantasy II":"🗡️","Final Fantasy III":"💎","Final Fantasy IV":"🌙",
-  "Final Fantasy V":"🌳","Final Fantasy VI":"🚂","Final Fantasy XII":"🏛️","Final Fantasy XIII":"🔮",
-  "The Legend of Zelda: Majora's Mask":"🎭","The Legend of Zelda: Skyward Sword":"☁️",
-  "Spyro the Dragon":"🐲","Star Fox 64":"🦊","Star Wars Jedi: Fallen Order":"⚔️","Star Wars: The Force Unleashed":"⚡",
-  "Call of Duty: Modern Warfare":"🎖️","The Elder Scrolls V: Skyrim":"🐲","Dragon Age: Inquisition":"🛡️",
-  "Terraria":"⛏️","Ghost of Tsushima":"🎌","Ghost of Yotei":"🐺",
-  "Final Fantasy VII":"🗡️","Final Fantasy VIII":"🎓","Final Fantasy IX":"🃏","Final Fantasy X":"🌊","Final Fantasy XV":"🚗",
-  "Super Mario Party":"🎉",
-  "God of War (2018)":"🪓","God of War III":"⚡","God of War Ragnarök":"🐺","Kingdom Hearts III":"🗝️",
-  "Kingdom Hearts: Birth by Sleep":"💤","Kingdom Hearts 358/2 Days":"🍦",
-  "Crash Bandicoot":"🦘","Crash Bandicoot 2: Cortex Strikes Back":"🤖","Crash Bandicoot: Warped":"⏳","Crash Twinsanity":"🖤",
-  "Tomb Raider (2013)":"🏝️","Rise of the Tomb Raider":"🏔️",
-  "Dark Souls III":"🗿","Dark Souls II":"👑",
-  "Elden Ring: Shadow of the Erdtree":"🔥",
-  "Super Street Fighter II":"🎯","Street Fighter IV":"🦵","Street Fighter 6":"🥊",
-  "Mortal Kombat 1":"🪭","Mortal Kombat X":"🎩","Mortal Kombat 9":"💀",
-  "The Witcher":"🧙","The Witcher 2: Assassins of Kings":"⚔️",
-  "Horizon Forbidden West":"🗡️",
-  "Bloodborne: The Old Hunters":"⚔️",
-  "Persona 4":"🗡️","Persona 3":"🔫",
-  "Devil May Cry 4":"🔫","Devil May Cry 2":"🗡️",
-  "Minecraft Dungeons":"👹",
-  "Cyberpunk 2077: Phantom Liberty":"🕶️",
-  "Bayonetta 2":"🐺","Bayonetta 3":"🐈",
-  "Mega Man X":"🔵",
-  "Metroid Prime":"🐉","Metroid Dread":"🦅",
-  "Cuphead: The Delicious Last Course":"👻",
-  "Hollow Knight: Silksong":"🪡",
-  "Doom (2016)":"🤖",
-  "Crash Bandicoot 4: It's About Time":"🦊","Super Mario Odyssey":"🍄","Donkey Kong Country":"🍌",
-  "The Legend of Zelda: Breath of the Wild":"🗡️","The Legend of Zelda: Ocarina of Time":"⏳",
-  "The Legend of Zelda: Twilight Princess":"🌓","Uncharted 4: A Thief's End":"🏴‍☠️",
-  "Uncharted: The Lost Legacy":"🗺️","Shadow of the Tomb Raider":"🏹",
-  "Clair Obscur: Expedition 33":"🎨","Dark Souls":"🔥","Elden Ring":"🌳","Fortnite":"🪂",
-  "Resident Evil 4":"🧟","Resident Evil 3":"🧟","Resident Evil 5":"🧟","Resident Evil 2":"🧟",
-  "Metal Gear Solid":"📦","Metal Gear Solid V: The Phantom Pain":"📦","Metal Gear Solid 2: Sons of Liberty":"📦",
-  "Street Fighter II":"🥊","Mortal Kombat 11":"💀","Halo: Combat Evolved":"🪖","Halo 2":"🪖",
-  "The Witcher 3: Wild Hunt":"⚔️","Horizon Zero Dawn":"🏹","Sekiro: Shadows Die Twice":"🥷",
-  "Bloodborne":"🌙","Persona 5":"🎭","Devil May Cry 5":"😈","Overwatch":"🎯","Overwatch 2":"🎯",
-  "Minecraft":"⛏️","Grand Theft Auto: San Andreas":"🚗","Grand Theft Auto V":"🚗",
-  "Marvel's Spider-Man":"🕷️","Marvel's Spider-Man: Miles Morales":"🕸️",
-  "Assassin's Creed II":"🗡️","Assassin's Creed":"🦅","Assassin's Creed III":"🏹","Assassin's Creed Odyssey":"⚔️",
-  "Cyberpunk 2077":"🤖","The Last of Us":"🍄","The Last of Us Part II":"🍄",
-  "Bayonetta":"💃","Sonic the Hedgehog 2":"💨","Sonic Adventure 2":"🖤","Sonic CD":"🔨",
-  "Mega Man 2":"🤖","Super Metroid":"🚀","Diablo II":"😈","Diablo IV":"😈",
-  "Red Dead Redemption 2":"🤠","Red Dead Redemption":"🤠","Cuphead":"☕","Hollow Knight":"🗡️",
-  "Doom Eternal":"😈","League of Legends":"🌀"
-};
 
 function buildGamesList(){
-  const counts={}, genres={}, franchises={};
+  const genres={}, emoji={};
   C.forEach(ch=>{
-    counts[ch.sp]=(counts[ch.sp]||0)+1;
-    if(!genres[ch.sp]) genres[ch.sp]=ch.g;
-    if(!franchises[ch.sp]) franchises[ch.sp]=ch.fr;
+    if(!genres[ch.fr]) genres[ch.fr]=new Set();
+    genres[ch.fr].add(ch.g);
+    if(!emoji[ch.fr]) emoji[ch.fr]=ch.e;
   });
-  const sorted=Object.entries(counts).sort((a,b)=>a[0].localeCompare(b[0]));
-  document.getElementById('gameGrid').innerHTML=sorted.map(([name,count])=>`
-    <div class="game-item" onclick="showGameChars('${name.replace(/'/g,"\\'")}')" style="cursor:pointer">
-      <span class="game-emoji">${GAME_EMOJIS[name]||'🎮'}</span>
+  const sorted=Object.keys(genres).sort((a,b)=>a.localeCompare(b));
+  document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
+    <div class="game-item" onclick="showGameChars('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+      <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
-        <div class="game-name">${name}</div>
-        <div class="game-genre">${genres[name]||''} · ${franchises[name]||''}</div>
-        <div class="game-count">${count} Charakter${count===1?'':'e'}</div>
+        <div class="game-name">${fr}</div>
+        <div class="game-genre">${[...genres[fr]].join(', ')}</div>
       </div>
     </div>`).join('');
 }
@@ -125,33 +74,32 @@ function toggleGamesList(){
 function filterGamesList(){
   const q=document.getElementById('gameSearchInp').value.trim().toLowerCase();
   if(!q){ buildGamesList(); return; }
-  const counts={}, genres={}, franchises={};
+  const genres={}, emoji={};
   C.forEach(ch=>{
-    counts[ch.sp]=(counts[ch.sp]||0)+1;
-    if(!genres[ch.sp]) genres[ch.sp]=ch.g;
-    if(!franchises[ch.sp]) franchises[ch.sp]=ch.fr;
+    if(!genres[ch.fr]) genres[ch.fr]=new Set();
+    genres[ch.fr].add(ch.g);
+    if(!emoji[ch.fr]) emoji[ch.fr]=ch.e;
   });
-  const sorted=Object.entries(counts).filter(([name])=>{
-    if(name.toLowerCase().includes(q)) return true;
-    if((franchises[name]||'').toLowerCase().includes(q)) return true;
-    return C.some(ch=>ch.sp===name && ch.n.toLowerCase().includes(q));
-  }).sort((a,b)=>a[0].localeCompare(b[0]));
-  document.getElementById('gameGrid').innerHTML=sorted.map(([name,count])=>`
-    <div class="game-item" onclick="showGameChars('${name.replace(/'/g,"\\'")}')" style="cursor:pointer">
-      <span class="game-emoji">${GAME_EMOJIS[name]||'🎮'}</span>
+  const sorted=Object.keys(genres).filter(fr=>{
+    if(fr.toLowerCase().includes(q)) return true;
+    if([...genres[fr]].some(g=>g.toLowerCase().includes(q))) return true;
+    return C.some(ch=>ch.fr===fr && ch.n.toLowerCase().includes(q));
+  }).sort((a,b)=>a.localeCompare(b));
+  document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
+    <div class="game-item" onclick="showGameChars('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+      <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
-        <div class="game-name">${name}</div>
-        <div class="game-genre">${genres[name]||''} · ${franchises[name]||''}</div>
-        <div class="game-count">${count} Charakter${count===1?'':'e'}</div>
+        <div class="game-name">${fr}</div>
+        <div class="game-genre">${[...genres[fr]].join(', ')}</div>
       </div>
     </div>`).join('') || '<div style="color:var(--muted);text-align:center;padding:16px;grid-column:1/-1">Keine Treffer</div>';
 }
-function showGameChars(name){
-  const chars=C.filter(c=>c.sp===name);
+function showGameChars(fr){
+  const chars=C.filter(c=>c.fr===fr);
   document.getElementById('gameGrid').style.display='none';
   document.getElementById('charListPanel').style.display='block';
   document.getElementById('charListContent').innerHTML=`
-    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${GAME_EMOJIS[name]||'🎮'} ${name}</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${fr}</div>
     <div style="display:flex;flex-direction:column;gap:6px">
     ${chars.map(c=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.82rem">
       <span>${c.e}</span><span style="font-weight:600">${c.n}</span>
@@ -163,6 +111,7 @@ function backToGameList(){
   document.getElementById('gameGrid').style.display='grid';
   document.getElementById('charListPanel').style.display='none';
 }
+
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let playerName='', target=null, guesses=[], won=false, lost=false, gameMode='endless';
