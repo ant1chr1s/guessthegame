@@ -149,11 +149,11 @@ function updateKnownRow(){
 // ── DAILY PROGRESS PERSISTENCE ────────────────────────────────────────────────
 function saveDailyProgress(){
   if(gameMode!=='daily') return;
-  const key='daily_progress_'+getDailyDateStr();
+  const key='gtg_daily_progress_'+getDailyDateStr();
   const savedGuesses = guesses.filter(g=>!g._hint).map(g=>({n:g.n,e:g.e,fr:g.fr,sp:g.sp,g:g.g,h:g.h,ha:g.ha,w:g.w,p:g.p}));
   localStorage.setItem(key, JSON.stringify({guesses:savedGuesses, revealedHints, hintsUsed}));
 }
-function clearDailyProgress(){ localStorage.removeItem('daily_progress_'+getDailyDateStr()); }
+function clearDailyProgress(){ localStorage.removeItem('gtg_daily_progress_'+getDailyDateStr()); }
 
 // ── GITHUB LEADERBOARD API ────────────────────────────────────────────────────
 async function loadLb(showToast=false){
@@ -184,7 +184,7 @@ function getStats(name){ return leaderboard[name] || {wins:0,losses:0,streak:0,b
 
 async function recordResult(didWin, attempts){
   if(gameMode==='daily'){
-    const todayKey = 'daily_played_' + getDailyDateStr();
+    const todayKey = 'gtg_daily_played_' + getDailyDateStr();
     localStorage.setItem(todayKey, JSON.stringify({won:didWin, attempts, gave_up:!didWin}));
     clearDailyProgress();
     await recordDailyResult(didWin, attempts);
@@ -284,7 +284,7 @@ function renderDailyLb(){
   const medals=['🥇','🥈','🥉'];
 
   const char=getDailyCharForDate(dateStr);
-  const todayKey='daily_played_'+dateStr;
+  const todayKey='gtg_daily_played_'+dateStr;
   const alreadyPlayed=localStorage.getItem(todayKey);
   const isPast = dateStr<today;
   const showChar = alreadyPlayed || isPast;
@@ -402,7 +402,7 @@ function toggleLb(){ document.getElementById('lbPanel').classList.toggle('open')
 function newGame(){
   if(gameMode==='daily'){
     target = getDailyChar();
-    const todayKey = 'daily_played_' + getDailyDateStr();
+    const todayKey = 'gtg_daily_played_' + getDailyDateStr();
     const alreadyPlayed = localStorage.getItem(todayKey);
     if(alreadyPlayed){
       const d=JSON.parse(alreadyPlayed);
