@@ -405,5 +405,20 @@ const C=[
 {n:"Saito",e:"👹",fr:"Ghost",sp:"Ghost of Yotei",g:"Action-Adventure",ge:"männlich",h:185,ha:"Schwarz",w:"Katana",p:"NPC"},
 {n:"Der Oni",e:"🗿",fr:"Ghost",sp:"Ghost of Yotei",g:"Action-Adventure",ge:"männlich",h:200,ha:"Keine",w:"Großschwert",p:"NPC"},
 {n:"Die Kitsune",e:"🦊",fr:"Ghost",sp:"Ghost of Yotei",g:"Action-Adventure",ge:"weiblich",h:165,ha:"Schwarz",w:"Dolch",p:"NPC"},
-{n:"Oyuki",e:"🌸",fr:"Ghost",sp:"Ghost of Yotei",g:"Action-Adventure",ge:"weiblich",h:160,ha:"Schwarz",w:"Keine",p:"NPC"}
+{n:"Oyuki",e:"🌸",fr:"Ghost",sp:"Ghost of Yotei",g:"Action-Adventure",ge:"weiblich",h:160,ha:"Schwarz",w:"Keine",p:"NPC"},
+{n:"Godfrey, Erster Eldenlord",e:"👑",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:220,ha:"Braun",w:"Axt",p:"NPC"},
+{n:"Radagon",e:"☀️",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:210,ha:"Gold",w:"Hammer",p:"NPC"},
+{n:"Rennala, Königin des Vollmonds",e:"🌙",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"weiblich",h:165,ha:"Blond",w:"Magie",p:"NPC"},
+{n:"Rykard, Lord der Blasphemie",e:"🐍",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:280,ha:"Rot",w:"Schwert",p:"NPC"},
+{n:"Morgott, der Omenkönig",e:"👑",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:230,ha:"Rot",w:"Schwert",p:"NPC"},
+{n:"Margit, der Gefallene Omen",e:"🦴",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:230,ha:"Keine",w:"Keule",p:"NPC"},
+{n:"Maliketh, die Schwarze Klinge",e:"⚫",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:200,ha:"Schwarz",w:"Schwert",p:"NPC"},
+{n:"Astel, Naturgeborener der Leere",e:"🌌",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:300,ha:"Keine",w:"Magie",p:"NPC"},
+{n:"Blaidd, der Halbwolf",e:"🐺",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:190,ha:"Grau",w:"Schwert",p:"NPC"},
+{n:"Iji",e:"🔧",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:250,ha:"Keine",w:"Armbrust",p:"NPC"},
+{n:"Patches, der Entfesselte",e:"🗡️",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:175,ha:"Braun",w:"Dolch",p:"NPC"},
+{n:"Gideon Ofnir, der Allwissende",e:"📜",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:180,ha:"Weiß",w:"Keine",p:"NPC"},
+{n:"Fia, die Totenbett-Gefährtin",e:"🖤",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"weiblich",h:165,ha:"Schwarz",w:"Keine",p:"NPC"},
+{n:"Der Kotfresser",e:"⛓️",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:185,ha:"Keine",w:"Schwert",p:"NPC"},
+{n:"Alexander, der Kriegertopf",e:"🏺",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ge:"männlich",h:200,ha:"Keine",w:"Keule",p:"NPC"}
 ];
