@@ -44,9 +44,15 @@ function getDailyChar(){ return getDailyCharForDate(getDailyDateStr()); }
 
 // ── GAMES LIST (Alle Spiele + Genre) ──────────────────────────────────────────
 const GAME_EMOJIS = {
+  "Final Fantasy":"⚔️","Final Fantasy II":"🗡️","Final Fantasy III":"💎","Final Fantasy IV":"🌙",
+  "Final Fantasy V":"🌳","Final Fantasy VI":"🚂","Final Fantasy XII":"🏛️","Final Fantasy XIII":"🔮",
+  "The Legend of Zelda: Majora's Mask":"🎭","The Legend of Zelda: Skyward Sword":"☁️",
+  "Spyro the Dragon":"🐲","Star Fox 64":"🦊","Star Wars Jedi: Fallen Order":"⚔️","Star Wars: The Force Unleashed":"⚡",
+  "Call of Duty: Modern Warfare":"🎖️","The Elder Scrolls V: Skyrim":"🐲","Dragon Age: Inquisition":"🛡️",
+  "Terraria":"⛏️","Ghost of Tsushima":"🎌",
   "Final Fantasy VII":"🗡️","Final Fantasy VIII":"🎓","Final Fantasy IX":"🃏","Final Fantasy X":"🌊","Final Fantasy XV":"🚗",
   "Super Mario Party":"🎉",
-  "God of War (2018)":"🪓","God of War III":"⚡","Kingdom Hearts III":"🗝️",
+  "God of War (2018)":"🪓","God of War III":"⚡","God of War Ragnarök":"🐺","Kingdom Hearts III":"🗝️",
   "Kingdom Hearts: Birth by Sleep":"💤","Kingdom Hearts 358/2 Days":"🍦",
   "Crash Bandicoot":"🦘","Crash Bandicoot 2: Cortex Strikes Back":"🤖","Crash Bandicoot: Warped":"⏳","Crash Twinsanity":"🖤",
   "Tomb Raider (2013)":"🏝️","Rise of the Tomb Raider":"🏔️",
