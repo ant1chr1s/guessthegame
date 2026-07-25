@@ -10,8 +10,8 @@ const DAILY_LB_FILE = 'leaderboard-daily.json';
 
 const MAX_GUESSES = 30;
 const HINT_AT = [10, 20];
-const COL_KEYS  = ['fr','sp','g','ge','h','ha','w','p'];
-const COL_NAMES = ['Franchise','Spiel','Genre','Geschlecht','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
+const COL_KEYS  = ['fr','sp','g','ra','ge','h','ha','w','p'];
+const COL_NAMES = ['Franchise','Spiel','Genre','Rasse','Geschlecht','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
 
 // Safely escape a string for embedding inside `onclick="fn('...')"`.
 // Must escape backslashes and single quotes (JS string literal) AND double
