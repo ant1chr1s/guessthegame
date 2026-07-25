@@ -410,6 +410,7 @@ function joinGame(mode='endless'){
   if(name.length>20){ err.textContent='Max. 20 Zeichen!'; err.style.display='block'; return; }
   err.style.display='none';
   playerName=name;
+  localStorage.setItem('gtg_playerName', name);
   gameMode=mode;
   // Reset any leftover panel state from a previous mode/session so nothing leaks between modes
   document.getElementById('dailyLbPanel').classList.remove('open');
@@ -690,6 +691,16 @@ function toast(msg){
 document.getElementById('nameInp').addEventListener('keydown', e=>{ if(e.key==='Enter') joinGame('endless'); });
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+(function restoreRememberedName(){
+  try{
+    const saved = localStorage.getItem('gtg_playerName');
+    if(saved){
+      const inp = document.getElementById('nameInp');
+      inp.value = saved;
+      inp.select();
+    }
+  } catch(e){}
+})();
 loadLb();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
