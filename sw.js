@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guessthegame-v7';
+const CACHE_NAME = 'guessthegame-v8';
 const ASSETS = [
   './',
   './index.html',

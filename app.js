@@ -91,7 +91,7 @@ function buildGamesList(){
   });
   const sorted=Object.keys(genres).sort((a,b)=>a.localeCompare(b));
   document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
-    <div class="game-item" onclick="showGameChars('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+    <div class="game-item" onclick="showFranchiseGames('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
       <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
         <div class="game-name">${fr}</div>
@@ -103,6 +103,7 @@ function toggleGamesList(){
   const m=document.getElementById('gameModal');
   if(!m.classList.contains('open')){
     document.getElementById('gameGrid').style.display='grid';
+    document.getElementById('gamesInFranchisePanel').style.display='none';
     document.getElementById('charListPanel').style.display='none';
     buildGamesList();
     m.classList.add('open');
@@ -125,7 +126,7 @@ function filterGamesList(){
     return C.some(ch=>ch.fr===fr && ch.n.toLowerCase().includes(q));
   }).sort((a,b)=>a.localeCompare(b));
   document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
-    <div class="game-item" onclick="showGameChars('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+    <div class="game-item" onclick="showFranchiseGames('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
       <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
         <div class="game-name">${fr}</div>
@@ -133,12 +134,37 @@ function filterGamesList(){
       </div>
     </div>`).join('') || '<div style="color:var(--muted);text-align:center;padding:16px;grid-column:1/-1">Keine Treffer</div>';
 }
-function showGameChars(fr){
-  const chars=C.filter(c=>c.fr===fr);
+let currentFranchise = null;
+function showFranchiseGames(fr){
+  currentFranchise = fr;
+  const chars = C.filter(c=>c.fr===fr);
+  const counts={}, genreOf={};
+  chars.forEach(c=>{
+    counts[c.sp]=(counts[c.sp]||0)+1;
+    if(!genreOf[c.sp]) genreOf[c.sp]=c.g;
+  });
+  const games = Object.keys(counts).sort((a,b)=>a.localeCompare(b));
   document.getElementById('gameGrid').style.display='none';
+  document.getElementById('charListPanel').style.display='none';
+  document.getElementById('gamesInFranchisePanel').style.display='block';
+  document.getElementById('gamesInFranchiseContent').innerHTML=`
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${fr}</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+    ${games.map(sp=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.82rem;cursor:pointer" onclick="showGameChars('${fr.replace(/'/g,"\\'")}','${sp.replace(/'/g,"\\'")}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600">${sp}</div>
+        <div style="font-size:.68rem;color:var(--accent);margin-top:1px">${genreOf[sp]}</div>
+      </div>
+      <span style="color:var(--muted);font-size:.72rem">${counts[sp]} Charakter${counts[sp]===1?'':'e'}</span>
+    </div>`).join('')}
+    </div>`;
+}
+function showGameChars(fr, sp){
+  const chars=C.filter(c=>c.fr===fr && c.sp===sp);
+  document.getElementById('gamesInFranchisePanel').style.display='none';
   document.getElementById('charListPanel').style.display='block';
   document.getElementById('charListContent').innerHTML=`
-    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${fr}</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${sp}</div>
     <div style="display:flex;flex-direction:column;gap:6px">
     ${chars.map(c=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.82rem">
       <span>${c.e}</span><span style="font-weight:600">${c.n}</span>
@@ -148,7 +174,16 @@ function showGameChars(fr){
 }
 function backToGameList(){
   document.getElementById('gameGrid').style.display='grid';
+  document.getElementById('gamesInFranchisePanel').style.display='none';
   document.getElementById('charListPanel').style.display='none';
+}
+function backToGamesInFranchise(){
+  document.getElementById('charListPanel').style.display='none';
+  if(currentFranchise){
+    showFranchiseGames(currentFranchise);
+  } else {
+    backToGameList();
+  }
 }
 
 
