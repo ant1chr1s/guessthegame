@@ -739,6 +739,17 @@ document.getElementById('nameInp').addEventListener('keydown', e=>{ if(e.key==='
 loadLb();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      // If a new service worker takes control of an already-open page,
+      // reload once so the fresh HTML/JS/CSS actually gets used.
+      let hasReloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+        if(hasReloaded) return;
+        hasReloaded = true;
+        window.location.reload();
+      });
+      // Proactively check for a newer service worker on every load
+      reg.update().catch(()=>{});
+    }).catch(()=>{});
   });
 }
