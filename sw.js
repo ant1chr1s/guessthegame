@@ -1,4 +1,4 @@
-const CACHE_NAME = 'guessthegame-v8';
+const CACHE_NAME = 'guessthegame-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -22,14 +22,19 @@ self.addEventListener('activate', e=>{
   self.clients.claim();
 });
 
+// Network-first for the app shell (HTML/CSS/JS): always try to fetch the
+// latest version when online, and only fall back to the cached copy if the
+// network request fails (offline support). This avoids ever getting stuck
+// on an outdated cached version after a deploy.
 self.addEventListener('fetch', e=>{
   if(e.request.method!=='GET') return;
   if(e.request.url.includes('api.github.com')) return; // never cache leaderboard calls
+
   e.respondWith(
-    caches.match(e.request).then(cached=>cached || fetch(e.request).then(res=>{
+    fetch(e.request, {cache:'no-store'}).then(res=>{
       const resClone = res.clone();
       caches.open(CACHE_NAME).then(cache=>cache.put(e.request, resClone)).catch(()=>{});
       return res;
-    }).catch(()=>cached))
+    }).catch(()=>caches.match(e.request))
   );
 });
