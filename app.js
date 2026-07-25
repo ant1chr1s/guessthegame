@@ -13,6 +13,17 @@ const HINT_AT = [10, 20];
 const COL_KEYS  = ['fr','sp','g','ge','h','ha','w','p'];
 const COL_NAMES = ['Franchise','Spiel','Genre','Geschlecht','Größe','Haarfarbe','Waffe','Spielbar/NPC'];
 
+// Safely escape a string for embedding inside `onclick="fn('...')"`.
+// Must escape backslashes and single quotes (JS string literal) AND double
+// quotes (HTML attribute delimiter) - otherwise names containing a literal
+// " (e.g. Carl "CJ" Johnson) break the attribute and become unclickable.
+function escJsAttr(s){
+  return String(s)
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'&quot;');
+}
+
 // ── DAILY ROTATION (deterministisch, stabil, ohne Wiederholung bis Zyklusende) ─
 // Verteilt Charaktere so, dass niemals zwei Tage hintereinander dieselbe
 // Franchise vorkommt (wichtig, da z.B. Final Fantasy mit Abstand die meisten
@@ -91,7 +102,7 @@ function buildGamesList(){
   });
   const sorted=Object.keys(genres).sort((a,b)=>a.localeCompare(b));
   document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
-    <div class="game-item" onclick="showFranchiseGames('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+    <div class="game-item" onclick="showFranchiseGames('${escJsAttr(fr)}')" style="cursor:pointer">
       <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
         <div class="game-name">${fr}</div>
@@ -126,7 +137,7 @@ function filterGamesList(){
     return C.some(ch=>ch.fr===fr && ch.n.toLowerCase().includes(q));
   }).sort((a,b)=>a.localeCompare(b));
   document.getElementById('gameGrid').innerHTML=sorted.map(fr=>`
-    <div class="game-item" onclick="showFranchiseGames('${fr.replace(/'/g,"\\'")}')" style="cursor:pointer">
+    <div class="game-item" onclick="showFranchiseGames('${escJsAttr(fr)}')" style="cursor:pointer">
       <span class="game-emoji">${emoji[fr]||'🎮'}</span>
       <div class="game-info">
         <div class="game-name">${fr}</div>
@@ -150,7 +161,7 @@ function showFranchiseGames(fr){
   document.getElementById('gamesInFranchiseContent').innerHTML=`
     <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${fr}</div>
     <div style="display:flex;flex-direction:column;gap:6px">
-    ${games.map(sp=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.82rem;cursor:pointer" onclick="showGameChars('${fr.replace(/'/g,"\\'")}','${sp.replace(/'/g,"\\'")}')">
+    ${games.map(sp=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.82rem;cursor:pointer" onclick="showGameChars('${escJsAttr(fr)}','${escJsAttr(sp)}')">
       <div style="flex:1;min-width:0">
         <div style="font-weight:600">${sp}</div>
         <div style="font-size:.68rem;color:var(--accent);margin-top:1px">${genreOf[sp]}</div>
@@ -558,8 +569,8 @@ function onSearch(){
     for(const [fr,chars] of Object.entries(grouped)){
       html += `<div style="padding:5px 13px 3px;font-size:.65rem;color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(0,229,255,.05);border-bottom:1px solid var(--border)">${fr}</div>`;
       chars.forEach(ch=>{
-        const sn=ch.n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-        const sf=ch.fr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        const sn=escJsAttr(ch.n);
+        const sf=escJsAttr(ch.fr);
         html += `<div class="sug-item" onclick="selectChar('${sn}','${sf}')">
           <span class="sug-emoji">${ch.e}</span>
           <div><div class="sug-name">${ch.n}</div><div class="sug-sub">${ch.sp}</div></div>
@@ -568,8 +579,8 @@ function onSearch(){
     }
   } else {
     html = matches.map(ch=>{
-      const sn=ch.n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-      const sf=ch.fr.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const sn=escJsAttr(ch.n);
+      const sf=escJsAttr(ch.fr);
       return `<div class="sug-item" onclick="selectChar('${sn}','${sf}')">
         <span class="sug-emoji">${ch.e}</span>
         <div><div class="sug-name">${ch.n}</div><div class="sug-sub">${ch.sp}</div></div>
