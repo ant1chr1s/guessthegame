@@ -550,12 +550,23 @@ function onSearch(){
   if(!q){ box.innerHTML=''; box.classList.remove('open'); return; }
   const already = new Set(guesses.map(g=>g.n+'|'+g.fr));
 
+  // Prefer matching a specific GAME title (e.g. "Final Fantasy VII"), since
+  // franchise-only matching fails when the query is longer/more specific
+  // than the franchise name itself (typing the full game title returned
+  // no results before).
+  const allGames = [...new Set(C.map(c=>c.sp))];
+  const exactSp = allGames.filter(s=>s.toLowerCase()===q);
+  const matchingSp = exactSp.length>0 ? exactSp : (q.length>=2 ? allGames.filter(s=>s.toLowerCase().includes(q)) : []);
+  const isSpSearch = matchingSp.length>0;
+
   const allFranchises = [...new Set(C.map(c=>c.fr))];
-  const matchingFr = q.length>=2 ? allFranchises.filter(f=>f.toLowerCase().includes(q)) : [];
+  const matchingFr = (!isSpSearch && q.length>=2) ? allFranchises.filter(f=>f.toLowerCase().includes(q)) : [];
   const isFrSearch = matchingFr.length>0;
 
   let matches;
-  if(isFrSearch){
+  if(isSpSearch){
+    matches = C.filter(c=>matchingSp.includes(c.sp) && !already.has(c.n+'|'+c.fr)).slice(0,60);
+  } else if(isFrSearch){
     matches = C.filter(c=>matchingFr.includes(c.fr) && !already.has(c.n+'|'+c.fr)).slice(0,60);
   } else {
     matches = C.filter(c=>c.n.toLowerCase().includes(q) && !already.has(c.n+'|'+c.fr)).slice(0,60);
@@ -563,7 +574,21 @@ function onSearch(){
   if(matches.length===0){ box.innerHTML=''; box.classList.remove('open'); return; }
 
   let html='';
-  if(isFrSearch){
+  if(isSpSearch){
+    const grouped={};
+    matches.forEach(ch=>{ if(!grouped[ch.sp]) grouped[ch.sp]=[]; grouped[ch.sp].push(ch); });
+    for(const [sp,chars] of Object.entries(grouped)){
+      html += `<div style="padding:5px 13px 3px;font-size:.65rem;color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:rgba(0,229,255,.05);border-bottom:1px solid var(--border)">${sp}</div>`;
+      chars.forEach(ch=>{
+        const sn=escJsAttr(ch.n);
+        const sf=escJsAttr(ch.fr);
+        html += `<div class="sug-item" onclick="selectChar('${sn}','${sf}')">
+          <span class="sug-emoji">${ch.e}</span>
+          <div><div class="sug-name">${ch.n}</div><div class="sug-sub">${ch.fr}</div></div>
+        </div>`;
+      });
+    }
+  } else if(isFrSearch){
     const grouped={};
     matches.forEach(ch=>{ if(!grouped[ch.fr]) grouped[ch.fr]=[]; grouped[ch.fr].push(ch); });
     for(const [fr,chars] of Object.entries(grouped)){
