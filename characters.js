@@ -420,5 +420,6 @@ const C=[
 {n:"Gideon Ofnir, der Allwissende",e:"📜",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ra:"Mensch",ge:"männlich",h:180,ha:"Weiß",w:"Keine",p:"NPC"},
 {n:"Fia, die Totenbett-Gefährtin",e:"🖤",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ra:"Mensch",ge:"weiblich",h:165,ha:"Schwarz",w:"Keine",p:"NPC"},
 {n:"Der Kotfresser",e:"⛓️",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ra:"Mensch",ge:"männlich",h:185,ha:"Keine",w:"Schwert",p:"NPC"},
-{n:"Alexander, der Kriegertopf",e:"🏺",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ra:"Monster",ge:"männlich",h:200,ha:"Keine",w:"Keule",p:"NPC"}
+{n:"Alexander, der Kriegertopf",e:"🏺",fr:"Elden Ring",sp:"Elden Ring",g:"Souls-like",ra:"Monster",ge:"männlich",h:200,ha:"Keine",w:"Keule",p:"NPC"},
+{n:"Kimahri Ronso",e:"🐯",fr:"Final Fantasy",sp:"Final Fantasy X",g:"JRPG",ra:"Tier",ge:"männlich",h:220,ha:"Blau",w:"Speer",p:"Spielbar"}
 ];
