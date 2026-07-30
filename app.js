@@ -706,9 +706,84 @@ function useHint(){
 }
 
 // ── COMPARE ───────────────────────────────────────────────────────────────────
+// Erscheinungsjahre aller Spiele im Datensatz - wird genutzt, um bei richtiger
+// Franchise aber falschem Spiel per Pfeil zu zeigen, ob das gesuchte Spiel
+// früher oder später erschienen ist als das geratene.
+const GAME_YEAR = {
+  "Assassin's Creed":2007, "Assassin's Creed II":2009, "Assassin's Creed III":2012, "Assassin's Creed Odyssey":2018,
+  "Bayonetta":2009, "Bayonetta 2":2014, "Bayonetta 3":2022,
+  "Bloodborne":2015, "Bloodborne: The Old Hunters":2015,
+  "Call of Duty: Modern Warfare":2007,
+  "Clair Obscur: Expedition 33":2025,
+  "Crash Bandicoot":1996, "Crash Bandicoot 2: Cortex Strikes Back":1997, "Crash Bandicoot 4: It's About Time":2020,
+  "Crash Bandicoot: Warped":1998, "Crash Twinsanity":2004,
+  "Cuphead":2017, "Cuphead: The Delicious Last Course":2022,
+  "Cyberpunk 2077":2020, "Cyberpunk 2077: Phantom Liberty":2023,
+  "Dark Souls":2011, "Dark Souls II":2014, "Dark Souls III":2016,
+  "Devil May Cry 2":2003, "Devil May Cry 4":2008, "Devil May Cry 5":2019,
+  "Diablo II":2000, "Diablo IV":2023,
+  "Doom (2016)":2016, "Doom Eternal":2020,
+  "Dragon Age: Inquisition":2014,
+  "Elden Ring":2022, "Elden Ring: Shadow of the Erdtree":2024,
+  "Final Fantasy":1987, "Final Fantasy II":1988, "Final Fantasy III":1990, "Final Fantasy IV":1991,
+  "Final Fantasy V":1992, "Final Fantasy VI":1994, "Final Fantasy VII":1997, "Final Fantasy VIII":1999,
+  "Final Fantasy IX":2000, "Final Fantasy X":2001, "Final Fantasy XII":2006, "Final Fantasy XIII":2009, "Final Fantasy XV":2016,
+  "Fortnite":2017,
+  "Ghost of Tsushima":2020, "Ghost of Yotei":2025,
+  "God of War (2018)":2018, "God of War III":2010, "God of War Ragnarök":2022,
+  "Grand Theft Auto V":2013, "Grand Theft Auto: San Andreas":2004,
+  "Halo 2":2004, "Halo: Combat Evolved":2001,
+  "Hollow Knight":2017, "Hollow Knight: Silksong":2025,
+  "Horizon Forbidden West":2022, "Horizon Zero Dawn":2017,
+  "Kingdom Hearts 358/2 Days":2009, "Kingdom Hearts III":2019, "Kingdom Hearts: Birth by Sleep":2010,
+  "League of Legends":2009,
+  "Marvel's Spider-Man":2018, "Marvel's Spider-Man: Miles Morales":2020,
+  "Mega Man 2":1988, "Mega Man X":1993,
+  "Metal Gear Solid":1998, "Metal Gear Solid 2: Sons of Liberty":2001, "Metal Gear Solid V: The Phantom Pain":2015,
+  "Metroid Dread":2021, "Metroid Prime":2002,
+  "Minecraft":2011, "Minecraft Dungeons":2020,
+  "Mortal Kombat 1":2023, "Mortal Kombat 11":2019, "Mortal Kombat 9":2011, "Mortal Kombat X":2015,
+  "Overwatch":2016, "Overwatch 2":2022,
+  "Persona 3":2006, "Persona 4":2008, "Persona 5":2016,
+  "Red Dead Redemption":2010, "Red Dead Redemption 2":2018,
+  "Resident Evil 2":1998, "Resident Evil 3":1999, "Resident Evil 4":2005, "Resident Evil 5":2009,
+  "Rise of the Tomb Raider":2015,
+  "Sekiro: Shadows Die Twice":2019,
+  "Shadow of the Tomb Raider":2018,
+  "Sonic Adventure 2":2001, "Sonic CD":1993, "Sonic the Hedgehog 2":1992,
+  "Spyro the Dragon":1998,
+  "Star Fox 64":1997,
+  "Star Wars Jedi: Fallen Order":2019, "Star Wars: The Force Unleashed":2008,
+  "Street Fighter 6":2023, "Street Fighter II":1991, "Street Fighter IV":2008,
+  "Super Mario Odyssey":2017, "Super Mario Party":2018,
+  "Super Metroid":1994, "Super Street Fighter II":1993,
+  "Terraria":2011,
+  "The Elder Scrolls V: Skyrim":2011,
+  "The Last of Us":2013, "The Last of Us Part II":2020,
+  "The Legend of Zelda: Breath of the Wild":2017, "The Legend of Zelda: Majora's Mask":2000,
+  "The Legend of Zelda: Ocarina of Time":1998, "The Legend of Zelda: Skyward Sword":2011,
+  "The Legend of Zelda: Twilight Princess":2006,
+  "The Witcher":2007, "The Witcher 2: Assassins of Kings":2011, "The Witcher 3: Wild Hunt":2015,
+  "Tomb Raider (2013)":2013,
+  "Uncharted 4: A Thief's End":2016, "Uncharted: The Lost Legacy":2017,
+};
+
 function cmpH(g,t){
   if(g===t) return {state:'correct',arrow:''};
   return {state: Math.abs(g-t)<=15 ? 'partial' : 'wrong', arrow: g<t?'↑':'↓'};
+}
+// Spiel-Vergleich: exakt = richtig; gleiche Franchise aber anderes Spiel =
+// teilweise richtig (gelb) mit Pfeil, der zeigt ob das gesuchte Spiel vor
+// oder nach dem geratenen erschienen ist; sonst falsch.
+function cmpSp(guess,tgt){
+  if(guess.sp === tgt.sp) return {state:'correct', arrow:''};
+  if(guess.fr === tgt.fr){
+    const gy = GAME_YEAR[guess.sp], ty = GAME_YEAR[tgt.sp];
+    let arrow = '';
+    if(gy!=null && ty!=null && gy!==ty) arrow = gy<ty ? '↑' : (gy>ty ? '↓' : '');
+    return {state:'partial', arrow};
+  }
+  return {state:'wrong', arrow:''};
 }
 function cmpStr(g,t){
   if(!g||!t) return 'wrong';
@@ -723,10 +798,15 @@ function cmpStr(g,t){
 }
 function cellState(key,guess,tgt){
   if(key==='h') return cmpH(guess.h,tgt.h).state;
+  if(key==='sp') return cmpSp(guess,tgt).state;
   if(key==='ha'||key==='p'||key==='ge') return guess[key]===tgt[key] ? 'correct' : 'wrong';
   return cmpStr(guess[key],tgt[key]);
 }
-function cellArrow(key,guess,tgt){ return key==='h' ? cmpH(guess.h,tgt.h).arrow : ''; }
+function cellArrow(key,guess,tgt){
+  if(key==='h') return cmpH(guess.h,tgt.h).arrow;
+  if(key==='sp') return cmpSp(guess,tgt).arrow;
+  return '';
+}
 function cellText(key,val){
   if(key==='h') return val+' cm';
   return val;
