@@ -177,11 +177,25 @@ function showGameChars(fr, sp){
   document.getElementById('charListContent').innerHTML=`
     <div style="font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--accent);margin-bottom:10px">${chars[0]?.e||'🎮'} ${sp}</div>
     <div style="display:flex;flex-direction:column;gap:6px">
-    ${chars.map(c=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.82rem">
+    ${chars.map(c=>`<div style="display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.82rem;cursor:pointer" onclick="selectCharFromList('${escJsAttr(c.n)}','${escJsAttr(c.fr)}')">
       <span>${c.e}</span><span style="font-weight:600">${c.n}</span>
       <span style="margin-left:auto;color:var(--muted);font-size:.72rem">${c.p}</span>
+      <span style="color:var(--cyan);font-size:.75rem">→</span>
     </div>`).join('')}
     </div>`;
+}
+function selectCharFromList(name, fr){
+  // Modal schließen
+  document.getElementById('gameModal').classList.remove('open');
+  document.getElementById('gamesInFranchisePanel').style.display='none';
+  document.getElementById('charListPanel').style.display='none';
+  // Charakter übernehmen
+  selectChar(name, fr);
+  const inp = document.getElementById('searchInp');
+  if(inp){
+    inp.value = name;
+    inp.focus();
+  }
 }
 function backToGameList(){
   document.getElementById('gameGrid').style.display='grid';
